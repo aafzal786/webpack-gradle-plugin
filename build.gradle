@@ -1,0 +1,74 @@
+plugins {
+	id 'java-gradle-plugin'
+	id 'com.gradle.plugin-publish' version '0.10.1'
+}
+
+repositories {
+	jcenter()
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+configurations {
+	functionalTestImplementation.extendsFrom testImplementation
+	functionalTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+dependencies {
+	implementation 'de.undercouch:gradle-download-task:4.0.2'
+	compileOnly 'org.projectlombok:lombok:1.18.10'
+	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+
+	testImplementation 'org.assertj:assertj-core:3.14.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+
+	functionalTestImplementation 'com.github.tomakehurst:wiremock-jre8:2.25.1'
+	functionalTestImplementation 'org.apache.commons:commons-compress:1.19'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+version '1.0.0'
+group 'com.github.dtrunk90'
+
+pluginBundle {
+	website = 'https://github.com/dtrunk90/webpack-gradle-plugin'
+	vcsUrl = 'https://github.com/dtrunk90/webpack-gradle-plugin'
+	tags = ['webpack', 'js', 'hbs', 'cjs', 'css', 'sass', 'scss', 'jpg', 'png']
+}
+
+gradlePlugin {
+	plugins {
+		webpack {
+			id = 'com.github.dtrunk90.webpack'
+			displayName = 'webpack'
+			description = 'A Gradle plugin for webpack.'
+			implementationClass = 'com.github.dtrunk90.gradle.webpack.WebpackGradlePlugin'
+		}
+	}
+}
+
+sourceSets {
+	functionalTest {
+	}
+}
+
+gradlePlugin.testSourceSets(sourceSets.functionalTest)
+
+task functionalTest(type: Test) {
+	testClassesDirs = sourceSets.functionalTest.output.classesDirs
+	classpath = sourceSets.functionalTest.runtimeClasspath
+	useJUnitPlatform()
+}
+
+check {
+	dependsOn(tasks.functionalTest)
+}
+
+javadoc {
+	failOnError false
+}

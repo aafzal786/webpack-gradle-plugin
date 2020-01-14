@@ -1,0 +1,12 @@
+import com.github.dtrunk90.gradle.webpack.Webpack;
+
+plugins {
+	id 'com.github.dtrunk90.webpack'
+}
+
+webpack {
+	nodeVersion = 'some.specific.version'
+	baseUrl = System.getenv("URL")
+}
+
+task execWebpackWithConfig(type: Webpack)
